@@ -1,1 +1,1 @@
-# service
+# 神谷の42のft_serviceの課題のprivateリポジトリ
