@@ -45,8 +45,6 @@ CMD ["/bin/sh"]
 #CMD ["/usr/bin/supervisord"]
 #005 1度だけftpできるが、1回接続が終わると、コンテナが終了してしまう
 #CMD ["/usr/sbin/vsftpd", "/etc/vsftpd/vsftpd.conf"]
-#006 
+#006 想定した動作になる
 #CMD ["/bin/sh", "/myapp2.sh"]
-#007 
-CMD ["/usr/bin/supervisord"]
 
