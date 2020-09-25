@@ -141,12 +141,49 @@ kubectl get pod
 kubectl exec -it ftps-replicaset-fqzz5 -- sh
 lftp -u test [EXTERNAL-IP]
 
-
 # configを変更する場合はmetallb-systemのポッドを全部削除
 # https://github.com/metallb/metallb/issues/348
 kubectl get pods -n metallb-system
 kubectl delete po -n metallb-system --all
 kubectl get pods -n metallb-system
+
+# 20200925
+# mysqlのReplicaSetの設定
+kubectl apply -f mysql-replicaset.yaml
+kubectl get replicaset -o wide
+kubectl get pod -o wide
+kubectl exec -it mysql-replicaset-j6ks5 -- sh
+
+mysql -h 127.0.0.1 -P 3306 -u mysql -pmysql
+show databases;
+use mysql; 
+show tables;
+SELECT user, Host FROM user;
+
+kubectl delete -f mysql-replicaset.yaml
+
+# ---------------------------
+# mysqlのserviceの設定
+# ---------------------------
+kubectl apply -f mysql-service.yaml
+kubectl get service
+kubectl describe services mysql-service
+
+# PersistentVolumeの設定
+# https://kubernetes.io/docs/tasks/configure-pod-container/configure-persistent-volume-storage/
+mkdir /tmp/hkamiya_data ← setup.shに必要
+kubectl apply -f pv-volume.yaml
+kubectl get pv task-pv-volume
+
+kubectl apply -f pv-claim.yaml
+kubectl get pv task-pv-volume
+kubectl get pvc task-pv-claim
+
+kubectl apply -f mysql-replicaset.yaml
+kubectl get replicaset mysql-replicaset
+kubectl get pod
+kubectl exec -it mysql-replicaset-kwdnr -- sh
+
 
 # その他
 minikube ip 
