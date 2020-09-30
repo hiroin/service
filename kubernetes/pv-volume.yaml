@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: task-pv-volume
+  name: mysql-pv-volume
   labels:
     type: local
 spec:
@@ -11,4 +11,8 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/tmp/hkamiya_data"
+    path: /data/mysql
+    type: DirectoryOrCreate
+#   nfs:
+#     server: 10.0.2.15
+#     path: /share

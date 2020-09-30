@@ -20,8 +20,8 @@ spec:
         imagePullPolicy: Never
         volumeMounts:
           - mountPath: "/var/lib/mysql"
-            name: task-pv-storage
+            name: mysql-pv-storage
       volumes:
-        - name: task-pv-storage
+        - name: mysql-pv-storage
           persistentVolumeClaim:
-            claimName: task-pv-claim
+            claimName: mysql-pv-claim

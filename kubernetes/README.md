@@ -1,6 +1,7 @@
 # minikube
 minikubeの起動コマンド
 sudo minikube start --vm-driver=none --extra-config=apiserver.service-node-port-range=1-65535
+minikube start --extra-config=apiserver.service-node-port-range=1-65535
 
 minikubeのステータス確認
 sudo minikube status
@@ -41,6 +42,10 @@ wget -S --no-check-certificate https://172.17.0.6/ -O -
 wget -S --no-check-certificate http://nginx-service/ -O -
 wget -S --no-check-certificate https://nginx-service/ -O -
 
+#　nginxのserviceへの接続確認 type: LoadBalancer
+minikube service nginx-service --url
+wget -S --no-check-certificate http://172.17.0.2/ -O -
+
 # nginxのReplicaSetの設定
 kubectl apply -f nginx-replicaset.yaml
 kubectl get replicaset -o wide
@@ -52,7 +57,7 @@ kubectl get pod -o wide
 
 kubectl delete -f nginx-replicaset.yaml
 
-#　nginxのserviceの設定 type: LoadBalancer
+#　nginxのserviceの設定 type: NodePort
 kubectl apply -f nginx-service.yaml
 kubectl get service
 kubectl describe services nginx-service
@@ -101,6 +106,8 @@ kubectl get service
 kubectl describe services nginx-service
 wget -S --no-check-certificate http://172.17.0.6/ -O -
 wget -S --no-check-certificate https://172.17.0.6/ -O -
+
+kubectl delete -f nginx-service.yaml
 
 # 20200924
 # ftpsのReplicaSetの設定
@@ -169,22 +176,40 @@ kubectl apply -f mysql-service.yaml
 kubectl get service
 kubectl describe services mysql-service
 
+kubectl delete -f mysql-service.yaml
+
+# ---------------------------
 # PersistentVolumeの設定
 # https://kubernetes.io/docs/tasks/configure-pod-container/configure-persistent-volume-storage/
-mkdir /tmp/hkamiya_data ← setup.shに必要
+<!-- mkdir /tmp/hkamiya_data ← setup.shに必要 -->
 kubectl apply -f pv-volume.yaml
-kubectl get pv task-pv-volume
+kubectl get pv -o wide
 
-kubectl apply -f pv-claim.yaml
-kubectl get pv task-pv-volume
-kubectl get pvc task-pv-claim
+<!-- kubectl apply -f pv-claim.yaml
+kubectl get pv mysql-pv-volume
+kubectl get pvc mysql-pv-claim -->
 
-kubectl apply -f mysql-replicaset.yaml
-kubectl get replicaset mysql-replicaset
+kubectl apply -f mysql-replicaset-merge.yaml
+kubectl get replicaset
 kubectl get pod
+kubectl describe pod [ポッド名]
 kubectl exec -it mysql-replicaset-kwdnr -- sh
 
+kubectl delete -f pv-volume.yaml
+kubectl delete -f mysql-replicaset-merge.yaml
+
+# ---------------------------
+# phpmyadminのserviceの設定
+# ---------------------------
+kubectl apply -f phpmyadmin-service.yaml
+kubectl get service
+kubectl delete -f phpmyadmin-service.yaml
 
 # その他
 minikube ip 
+
+# dockerのminikubeのdockerに接続する
+eval $(minikube docker-env)
+# ホストで動いているdockerに接続する
+eval export DOCKER_TLS_VERIFY="";export DOCKER_HOST="";export DOCKER_CERT_PATH="";export MINIKUBE_ACTIVE_DOCKERD=""
 
