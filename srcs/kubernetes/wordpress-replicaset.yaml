@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: wordpress
+  labels:
+    component: wordpress
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      component: wordpress
+  template: 
+    metadata:
+      labels:
+        component: wordpress
+    spec:
+      initContainers:
+      - name: "remove-lost-found"
+        image: hkamiya/wordpress:000
+        imagePullPolicy: Never
+        command:  ["sh", "-c", "until mysql -h mysql-service -P 3306 -u mysql -pmysql -e 'show databases' --connect_timeout=2; do echo waiting for mysql; done"]
+      containers:
+      - name: wordpress
+        image: hkamiya/wordpress:000
+        imagePullPolicy: Never

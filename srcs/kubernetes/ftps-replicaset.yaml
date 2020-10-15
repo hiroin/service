@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: ftps
+  labels:
+    component: ftps
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      component: ftps
+  template: 
+    metadata:
+      labels:
+        component: ftps
+    spec:
+      containers:
+      - name: ftps
+        image: hkamiya/ftps:000
+        imagePullPolicy: Never

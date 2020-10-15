@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: mysql-replicaset
+  labels:
+    component: mysql
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      component: mysql
+  template: 
+    metadata:
+      labels:
+        component: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:000
+        imagePullPolicy: Never
